@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benny's Bagels | Sandwich Feedback</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Sandwich Feedback</h1>
+    <form id="rating-form">
+        <h3>Leave feedback and receive 10% off your order.</h3>
+    </form>
+    <div>
+        <h3>Menu Standings</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sandwich</th>
+                    <th>Sold to Date</th>
+                    <th>Avg Rating</th>
+                </tr>
+            </thead>
+            <tbody id="menu-table"></tbody>
+        </table>
+    </div>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.21.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.21.1/firebase-firestore.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCJ8PREb4TB0awYiuHkcViDlyt9qshP-_M",
+            authDomain: "fir-bagels.firebaseapp.com",
+            databaseURL: "https://fir-bagels.firebaseio.com",
+            projectId: "fir-bagels",
+            storageBucket: "fir-bagels.appspot.com",
+            messagingSenderId: "172641506570",
+            appId: "1:172641506570:web:9d29ff88c75076f111d6f3"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
