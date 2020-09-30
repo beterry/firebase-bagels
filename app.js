@@ -17,12 +17,17 @@ let feedback = {
     },
 }
 
+function roundRating(rating){
+    let roundedRating = parseFloat(rating).toFixed(2);
+    return roundedRating
+}
+
 function updateTable(){
     menuTable.innerHTML = ""
 
-    let original = createRow("Benny's Original", feedback.original.total, feedback.original.rating);
-    let spicy = createRow("Spicy Avacado", feedback.spicy.total, feedback.spicy.rating);
-    let garlic = createRow("Garlic Parmesan", feedback.garlic.total, feedback.garlic.rating);
+    let original = createRow("Benny's Original", feedback.original.total, roundRating(feedback.original.rating));
+    let spicy = createRow("Spicy Avacado", feedback.spicy.total, roundRating(feedback.spicy.rating));
+    let garlic = createRow("Garlic Parmesan", feedback.garlic.total, roundRating(feedback.garlic.rating));
 
     menuTable.appendChild(original)
     menuTable.appendChild(spicy)
