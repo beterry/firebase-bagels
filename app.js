@@ -1,17 +1,18 @@
 const menuTable = document.querySelector('#menu-table');
+const form = document.querySelector('#rating-form');
 
 let feedback = {
     original: {
         total: 0,
-        rating: undefined,
+        rating: 0,
     },
     spicy: {
         total: 0,
-        rating: undefined,
+        rating: 0,
     },
     garlic: {
         total: 0,
-        rating: undefined,
+        rating: 0,
     },
 }
 
@@ -45,40 +46,39 @@ function createRow(sandwichName, numberSold, avgRating){
     return tr
 }
 
+//read data from firebase
+function readCollection(sandwich){
+    db.collection(sandwich).get().then((querySnapshot) => {
+        let ratingTotal = 0
+        let quantity = 0
+        querySnapshot.forEach((doc) => {
+            ratingTotal += doc.data().rating;
+            quantity++;
+        });
+        feedback[sandwich].rating = ratingTotal / quantity;
+        feedback[sandwich].total = quantity;
+        updateTable()
+    });
+}
+
+//init table
 updateTable()
 
-db.collection("original").get().then((querySnapshot) => {
-    let ratingTotal = 0
-    let quantity = 0
-    querySnapshot.forEach((doc) => {
-        ratingTotal += doc.data().rating;
-        quantity++;
-    });
-    feedback.original.rating = ratingTotal / quantity;
-    feedback.original.total = quantity;
-    updateTable()
-});
+readCollection('original')
+readCollection('spicy')
+readCollection('garlic')
 
-db.collection("spicy").get().then((querySnapshot) => {
-    let ratingTotal = 0
-    let quantity = 0
-    querySnapshot.forEach((doc) => {
-        ratingTotal += doc.data().rating;
-        quantity++;
+//save data
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    db.collection(form.sandwich.value).add({
+        comment: form.comment.value,
+        rating: parseInt(form.rating.value)
     });
-    feedback.spicy.rating = ratingTotal / quantity;
-    feedback.spicy.total = quantity;
-    updateTable()
-});
+    console.log(`Saved to '${form.sandwich.value}' collection...`);
 
-db.collection("garlic").get().then((querySnapshot) => {
-    let ratingTotal = 0
-    let quantity = 0
-    querySnapshot.forEach((doc) => {
-        ratingTotal += doc.data().rating;
-        quantity++;
-    });
-    feedback.garlic.rating = ratingTotal / quantity;
-    feedback.garlic.total = quantity;
-    updateTable()
-});
+    //clear fields after submit
+    form.sandwich.value = '';
+    form.comment.value = '';
+    form.rating.value = '';
+})

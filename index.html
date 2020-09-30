@@ -8,9 +8,27 @@
 </head>
 <body>
     <h1>Sandwich Feedback</h1>
-    <form id="rating-form">
+
+    <div>
         <h3>Leave feedback and receive 10% off your order.</h3>
-    </form>
+        <form id="rating-form">
+            <select name="sandwich" required>
+                <option value="">What did you order?</option>
+                <option value="original">Benny's Original</option>
+                <option value="spicy">Spicy Avacado</option>
+                <option value="garlic">Garlic Parmesan</option>
+            </select>
+            <select name="comment">
+                <option value="">Comment</option>
+                <option value="Perfect in every way!">Perfect in every way!</option>
+                <option value="Needed more mayo">Needed more mayo</option>
+                <option value="Needed more cheese">Needed more cheese</option>
+            </select>
+            <input type="number" id="rating" name="rating" min="1" max="5" required>
+            <button>Submit</button>
+        </form>
+    </div>
+    
     <div>
         <h3>Menu Standings</h3>
         <table>
