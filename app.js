@@ -1,18 +1,19 @@
 const menuTable = document.querySelector('#menu-table');
 const form = document.querySelector('#rating-form');
 
+//local data
 let feedback = {
     original: {
-        total: 0,
-        rating: 0,
+        total: "loading...",
+        rating: "loading...",
     },
     spicy: {
-        total: 0,
-        rating: 0,
+        total: "loading...",
+        rating: "loading...",
     },
     garlic: {
-        total: 0,
-        rating: 0,
+        total: "loading...",
+        rating: "loading...",
     },
 }
 
@@ -47,38 +48,50 @@ function createRow(sandwichName, numberSold, avgRating){
 }
 
 //read data from firebase
-function readCollection(sandwich){
-    db.collection(sandwich).get().then((querySnapshot) => {
-        let ratingTotal = 0
-        let quantity = 0
+function getFeedback(sandwich){
+    db.collection('feedback').where('sandwich', '==', sandwich).get().then((querySnapshot) => {
+        let ratingTotal = 0;
+        let quantity = 0;
         querySnapshot.forEach((doc) => {
             ratingTotal += doc.data().rating;
             quantity++;
         });
         feedback[sandwich].rating = ratingTotal / quantity;
         feedback[sandwich].total = quantity;
-        updateTable()
+        updateTable();
     });
 }
 
-//init table
-updateTable()
-
-readCollection('original')
-readCollection('spicy')
-readCollection('garlic')
-
-//save data
+//save data on form submit
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    db.collection(form.sandwich.value).add({
+    const sandwich = form.sandwich.value;
+    const rating = parseInt(form.rating.value);
+
+    db.collection('feedback').add({
+        sandwich,
         comment: form.comment.value,
-        rating: parseInt(form.rating.value)
+        rating,
+    })
+    .then(() => {
+        console.log(`Saved to firebase...`); 
     });
-    console.log(`Saved to '${form.sandwich.value}' collection...`);
+    
+    //update local data
+    feedback[sandwich].total += 1;
+    feedback[sandwich].rating = ((feedback[sandwich].rating * (feedback[sandwich].total - 1)) + rating) / feedback[sandwich].total;
+    updateTable();
 
     //clear fields after submit
     form.sandwich.value = '';
     form.comment.value = '';
     form.rating.value = '';
 })
+
+//init table
+updateTable();
+
+//read database
+getFeedback('original');
+getFeedback('spicy');
+getFeedback('garlic');
