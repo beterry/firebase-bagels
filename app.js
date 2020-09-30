@@ -26,7 +26,7 @@ function updateTable(){
     menuTable.innerHTML = ""
 
     let original = createRow("Benny's Original", feedback.original.total, roundRating(feedback.original.rating));
-    let spicy = createRow("Spicy Avacado", feedback.spicy.total, roundRating(feedback.spicy.rating));
+    let spicy = createRow("Spicy Avocado", feedback.spicy.total, roundRating(feedback.spicy.rating));
     let garlic = createRow("Garlic Parmesan", feedback.garlic.total, roundRating(feedback.garlic.rating));
 
     menuTable.appendChild(original)
