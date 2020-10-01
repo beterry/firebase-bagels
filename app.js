@@ -4,36 +4,43 @@ const form = document.querySelector('#rating-form');
 //local data
 let feedback = {
     original: {
-        total: "loading...",
-        rating: "loading...",
+        total: 0,
+        rating: 0,
     },
     spicy: {
-        total: "loading...",
-        rating: "loading...",
+        total: 0,
+        rating: 0,
     },
     garlic: {
-        total: "loading...",
-        rating: "loading...",
+        total: 0,
+        rating: 0,
     },
 }
 
+//rounds rating to two decimal places
 function roundRating(rating){
-    let roundedRating = parseFloat(rating).toFixed(2);
-    return roundedRating
+    if (rating > 0){
+        let roundedRating = parseFloat(rating).toFixed(2);
+        return roundedRating
+    } else {
+        return 'loading...'
+    }
 }
 
+//clears and then renders the table rows
 function updateTable(){
     menuTable.innerHTML = ""
 
-    let original = createRow("Benny's Original", feedback.original.total, roundRating(feedback.original.rating));
-    let spicy = createRow("Spicy Avocado", feedback.spicy.total, roundRating(feedback.spicy.rating));
-    let garlic = createRow("Garlic Parmesan", feedback.garlic.total, roundRating(feedback.garlic.rating));
+    let original = createRow("Benny's Original", feedback.original.total, roundRating(feedback.original.rating / feedback.original.total));
+    let spicy = createRow("Spicy Avocado", feedback.spicy.total, roundRating(feedback.spicy.rating / feedback.spicy.total));
+    let garlic = createRow("Garlic Parmesan", feedback.garlic.total, roundRating(feedback.garlic.rating / feedback.garlic.total));
 
     menuTable.appendChild(original)
     menuTable.appendChild(spicy)
     menuTable.appendChild(garlic)
 }
 
+//creates and returns a table row to append to the tbody
 function createRow(sandwichName, numberSold, avgRating){
     let tr = document.createElement('tr');
 
@@ -53,16 +60,12 @@ function createRow(sandwichName, numberSold, avgRating){
 }
 
 //read data from firebase
-function getFeedback(sandwich){
-    db.collection('feedback').where('sandwich', '==', sandwich).get().then((querySnapshot) => {
-        let ratingTotal = 0;
-        let quantity = 0;
+function getFeedback(){
+    db.collection('feedback').get().then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-            ratingTotal += doc.data().rating;
-            quantity++;
+            feedback[doc.data().sandwich].rating += doc.data().rating
+            feedback[doc.data().sandwich].total += 1
         });
-        feedback[sandwich].rating = ratingTotal / quantity;
-        feedback[sandwich].total = quantity;
         updateTable();
     });
 }
@@ -84,7 +87,7 @@ form.addEventListener('submit', (e) => {
     
     //update local data
     feedback[sandwich].total += 1;
-    feedback[sandwich].rating = ((feedback[sandwich].rating * (feedback[sandwich].total - 1)) + rating) / feedback[sandwich].total;
+    feedback[sandwich].rating += rating;
     updateTable();
 
     //clear fields after submit
@@ -97,6 +100,4 @@ form.addEventListener('submit', (e) => {
 updateTable();
 
 //read database
-getFeedback('original');
-getFeedback('spicy');
-getFeedback('garlic');
+getFeedback();
